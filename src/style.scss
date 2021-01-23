@@ -1,0 +1,121 @@
+// Prefixing parent selector references
+
+p {
+	.no-touch & {
+		color: orange;
+	}
+}
+
+// Variable defaults
+
+$allertClass: "error";
+$breakpoint: 768px;
+
+p.message-#{$allertClass} {
+	color: red;
+}
+
+@media (max-width: #{$breakpoint}) {
+	body {
+		display: none;
+	}
+}
+
+// Control directives
+
+$debug: true;
+
+.article {
+    background: grey;
+    min-height: 50px;
+    min-width: 50px;
+
+    @if ($debug) {
+        border: 1px dotted red;
+    }
+}
+
+@each $name in 'save' 'cancel' 'help' {
+    .icon-#{$name} {
+        min-height: 400px;
+        min-width: 100%;
+
+        background-image: url('https://images.pexels.com/photos/6269093/pexels-photo-6269093.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940');
+        background-repeat: no-repeat;
+        background-size: contain;
+        object-fit: fill;
+    }
+}
+
+// The list data type
+
+$buttonConfig: 'save' 50px, 'cancel' 50px, 'help' 100px;
+
+@each $tuple in $buttonConfig {
+    .button-#{nth($tuple, 1)} {
+        width: nth($tuple, 2);
+    }
+}
+
+// Defining custom functions
+
+@function make-greener($value) {
+    @return $value + rgb(0, 50, 0);
+}
+
+p {
+    background-color: make-greener(gray);
+    padding: 0px;
+}
+
+// Argument defaults
+
+@mixin foobar($a, $b, $padding: 20px) {
+    padding: $padding;
+}
+
+p {
+    @include foobar(123, "abc");
+}
+
+// Keyword defaults
+
+@mixin foobar1($topPadding: 10px, $rightPadding: 20px,
+    $bottomPadding: 10px, $leftPadding: 20px, $evenMorePadding: 10px) {
+    padding-top: $topPadding;
+    padding-right: $rightPadding;
+    padding-bottom: $bottomPadding;
+    padding-left: $leftPadding;
+}
+
+p.defaults {
+    @include foobar1($bottomPadding: 50px);
+}
+
+// Variable arguments for functions/mixins
+
+@mixin config-icon-colors($prefix, $colors...) {
+    @each $i in $colors {
+        .#{$prefix}#{nth($i, 1)} {
+            width: 50px;
+            min-height: 50px;
+            background-color: nth($i, 2);
+        }
+    }
+}
+
+@include config-icon-colors('icon-', 'green' green, 'gray' gray, 'red' red);
+
+// Content block arguments for mixins
+
+@mixin only-for-mobile {
+    @media (min-width: 1920px) {
+        @content;
+    }
+}
+
+@include only-for-mobile() {
+    p.content {
+        font-size: 150%;
+    }
+} 
